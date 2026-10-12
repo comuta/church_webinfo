@@ -30,6 +30,46 @@ Eine schlanke, moderne Website-Vorlage für gemeinnützige Vereine – insbesond
 - **Datenschutzerklärung** (DSGVO), inkl. Hinweisen zum Stream-Server und Hosting
 - Optional: **Erklärung zur Barrierefreiheit**
 
+## Design
+
+### Stil
+- **Warm und einladend:** natürliche, erdige Farben (Creme/Off-White als Grundton, ein warmes Ocker/Gold als Akzentfarbe, dunkles Blau oder Anthrazit für Text und Buttons). Alle Farben werden als CSS-Variablen definiert, damit jede Gemeinde sie anpassen kann.
+- **Typografie:** Serifenschrift für Überschriften (wirkt feierlich und vertraut), gut lesbare serifenlose Schrift für den Fließtext. Beide Schriften werden lokal gehostet.
+- **Bildstarker Einstieg:** großes Hero-Bild mit dunklem Overlay und Gemeindename bzw. Leitvers als Headline, darunter ein klarer Call-to-Action (z. B. „Jetzt live hören“ / „Nächster Gottesdienst“).
+- **Ruhige Abschnitte:** viel Weißraum, abwechselnd Text und Bild, Abschnittstitel mit kleinem Akzentstrich.
+- **Akzentband:** ein farbiges Band mit 3–4 Icon-Kacheln (z. B. Gottesdienst, Livestream, Anfahrt, Kontakt) als Schnellzugriff.
+- **Zitat-/Bibelvers-Block:** vollbreites Bild mit überlagertem Zitat als ruhiger Abschnittswechsel.
+- **Organische Details** (optional, sparsam): weiche Übergänge oder unregelmäßige Kanten an Bildern per SVG-Maske, ohne die Ladezeit zu belasten.
+
+### Seitenaufbau (Startseite)
+1. Header: Logo, Navigation (mobil als Menü-Button), Adresse/Kontakt kompakt
+2. Hero mit Headline und Call-to-Action
+3. Akzentband mit Schnellzugriff
+4. Livestream mit Live-Status und nächstem Gottesdienst
+5. „Wer wir sind / Was wir glauben“ – Text mit Bild
+6. Zitat-Block mit Hintergrundbild
+7. Adresse, Anfahrt und Parkhinweise
+8. Footer: Impressum, Datenschutz, Barrierefreiheit, Kontakt
+
+### Mobile first
+Die Basis-Styles gelten fürs Smartphone (einspaltig, alles untereinander). Größere Bildschirme werden ausschließlich über `min-width`-Media-Queries ergänzt (progressive Enhancement):
+
+| Breakpoint | ab     | Typische Änderungen                                        |
+|------------|--------|------------------------------------------------------------|
+| Basis      | 0      | einspaltig, Menü-Button, Icon-Kacheln 2×2                  |
+| `sm`       | 640px  | größere Abstände, Bilder breiter                           |
+| `md`       | 768px  | Text und Bild nebeneinander, Icon-Kacheln in einer Reihe   |
+| `lg`       | 1024px | volle Navigation im Header, maximale Inhaltsbreite         |
+| `xl`       | 1280px | großzügigere Hero-Höhe und Abstände                        |
+
+Grundprinzipien:
+- Layout mit CSS Grid (`repeat(auto-fit, minmax(…, 1fr))`) und Flexbox mit `flex-wrap`, damit möglichst wenige Breakpoints nötig sind
+- Fließende Schriftgrößen und Abstände per `clamp()`
+- Relative Einheiten (`rem`, `%`, `vw`) statt fester Pixelwerte
+- Bilder mit `max-width: 100%`, `aspect-ratio` und `object-fit: cover`
+- Touch-Ziele mindestens 44 × 44 px
+- Test auf echten Geräten und in mehreren Browsern
+
 ## Technische Anforderungen
 
 ### Barrierefreiheit
