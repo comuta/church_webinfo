@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="himmel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f3d9a4"/>
+      <stop offset="1" stop-color="#e8b86a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#himmel)"/>
+  <circle cx="1350" cy="380" r="120" fill="#fbecc8"/>
+  <path d="M0 720 L380 470 L700 650 L1050 420 L1420 640 L1920 460 V1080 H0Z" fill="#8a7a5c"/>
+  <path d="M0 860 L420 690 L820 820 L1240 680 L1920 800 V1080 H0Z" fill="#5d5440"/>
+  <path d="M0 980 L600 880 L1200 960 L1920 900 V1080 H0Z" fill="#3a3528"/>
+</svg>
