@@ -1,0 +1,94 @@
+---
+import { Image } from 'astro:assets';
+import { gemeinde } from '../config/gemeinde';
+import { bilder } from '../config/bilder';
+---
+
+<section class="hero" aria-labelledby="hero-titel">
+  <Image
+    class="hero__bild"
+    src={bilder.hero.src}
+    alt={bilder.hero.alt}
+    widths={[640, 1024, 1600, 1920]}
+    sizes="100vw"
+    loading="eager"
+    fetchpriority="high"
+  />
+  <div class="container hero__inhalt">
+    <p class="hero__gemeinde">{gemeinde.name}</p>
+    <h1 id="hero-titel">{gemeinde.hero.titel}</h1>
+    <p class="hero__untertitel">{gemeinde.hero.untertitel}</p>
+    <div class="hero__aktionen">
+      <a class="button button--hell" href="#livestream">Livestream &amp; Gottesdienste</a>
+      <a class="button button--rand" href="#anfahrt">Anfahrt</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    display: grid;
+    align-items: end;
+    min-height: min(80svh, 40rem);
+    color: #ffffff;
+    isolation: isolate;
+  }
+
+  .hero__bild {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Dunkler Verlauf, damit der Text auf jedem Bild gut lesbar bleibt */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(to top, rgb(20 18 14 / 0.8), var(--overlay) 60%, rgb(20 18 14 / 0.3));
+  }
+
+  .hero__inhalt {
+    padding-block: var(--abstand-lg);
+  }
+
+  .hero__gemeinde {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero h1 {
+    margin-block: 0.5rem 1rem;
+  }
+
+  .hero__untertitel {
+    max-width: 40ch;
+    font-size: var(--text-lg);
+  }
+
+  .hero__aktionen {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--abstand-sm);
+    margin-top: var(--abstand-md);
+  }
+
+  @media (min-width: 48rem) {
+    .hero {
+      align-items: center;
+    }
+  }
+
+  @media (min-width: 80rem) {
+    .hero {
+      min-height: min(85svh, 48rem);
+    }
+  }
+</style>
