@@ -1,0 +1,78 @@
+---
+import { gemeinde } from '../config/gemeinde';
+
+const { adresse, anfahrt } = gemeinde;
+---
+
+<section class="abschnitt" id="anfahrt" aria-labelledby="anfahrt-titel">
+  <div class="container">
+    <h2 class="abschnitt-titel" id="anfahrt-titel">Anfahrt</h2>
+
+    <div class="anfahrt">
+      <div class="anfahrt__karte">
+        <h3>Adresse</h3>
+        <address>
+          {gemeinde.name}<br />
+          {adresse.strasse}<br />
+          {adresse.plz} {adresse.ort}
+        </address>
+        <a class="button" href={adresse.kartenLink} rel="noopener" target="_blank">
+          In Karte öffnen<span class="sr-only"> (öffnet in neuem Tab)</span>
+        </a>
+      </div>
+
+      <div class="anfahrt__karte">
+        <h3>Parken</h3>
+        <ul>{anfahrt.parken.map((hinweis) => <li>{hinweis}</li>)}</ul>
+      </div>
+
+      {anfahrt.oepnv.length > 0 && (
+        <div class="anfahrt__karte">
+          <h3>Bus &amp; Bahn</h3>
+          <ul>{anfahrt.oepnv.map((hinweis) => <li>{hinweis}</li>)}</ul>
+        </div>
+      )}
+
+      {anfahrt.barrierefreiheit && (
+        <div class="anfahrt__karte">
+          <h3>Barrierefreier Zugang</h3>
+          <p>{anfahrt.barrierefreiheit}</p>
+        </div>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .anfahrt {
+    display: grid;
+    gap: var(--abstand-sm);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  }
+
+  .anfahrt__karte {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--abstand-xs);
+    padding: var(--abstand-md);
+    border: 1px solid var(--farbe-rand);
+    border-radius: var(--radius);
+  }
+
+  .anfahrt__karte address {
+    font-style: normal;
+  }
+
+  .anfahrt__karte .button {
+    margin-top: auto;
+  }
+
+  .anfahrt__karte ul {
+    padding-left: 1.25rem;
+  }
+
+  .anfahrt__karte li + li {
+    margin-top: 0.5rem;
+  }
+</style>

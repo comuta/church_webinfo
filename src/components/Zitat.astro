@@ -1,0 +1,60 @@
+---
+import { Image } from 'astro:assets';
+import { gemeinde } from '../config/gemeinde';
+import { bilder } from '../config/bilder';
+---
+
+<section class="zitat" aria-label="Bibelvers">
+  <Image class="zitat__bild" src={bilder.hero.src} alt="" widths={[640, 1024, 1600]} sizes="100vw" />
+  <figure class="container zitat__inhalt">
+    <blockquote>
+      <p>„{gemeinde.zitat.text}“</p>
+    </blockquote>
+    <figcaption>{gemeinde.zitat.quelle}</figcaption>
+  </figure>
+</section>
+
+<style>
+  .zitat {
+    position: relative;
+    padding-block: var(--abstand-lg);
+    color: #ffffff;
+    text-align: center;
+    isolation: isolate;
+  }
+
+  .zitat__bild {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .zitat::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgb(20 18 14 / 0.65);
+  }
+
+  .zitat blockquote {
+    max-width: 40ch;
+    margin-inline: auto;
+    font-family: var(--schrift-ueberschrift);
+    font-size: var(--text-xl);
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  .zitat figcaption {
+    margin-top: var(--abstand-sm);
+    font-weight: 600;
+  }
+
+  .zitat figcaption::before {
+    content: '– ';
+  }
+</style>

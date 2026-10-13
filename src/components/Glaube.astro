@@ -1,0 +1,45 @@
+---
+import { Image } from 'astro:assets';
+import { gemeinde } from '../config/gemeinde';
+import { bilder } from '../config/bilder';
+---
+
+<section class="abschnitt abschnitt--flaeche" id="glaube" aria-labelledby="glaube-titel">
+  <div class="container glaube">
+    <div class="fliesstext">
+      <h2 class="abschnitt-titel" id="glaube-titel">{gemeinde.glaube.titel}</h2>
+      {gemeinde.glaube.absaetze.map((absatz) => <p>{absatz}</p>)}
+    </div>
+    <Image
+      class="glaube__bild"
+      src={bilder.gemeinde.src}
+      alt={bilder.gemeinde.alt}
+      widths={[480, 800, 1200]}
+      sizes="(min-width: 48rem) 40vw, 100vw"
+    />
+  </div>
+</section>
+
+<style>
+  .glaube {
+    display: grid;
+    gap: var(--abstand-md);
+    align-items: center;
+  }
+
+  .glaube__bild {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius);
+    box-shadow: var(--schatten);
+  }
+
+  /* Ab md: Text und Bild nebeneinander */
+  @media (min-width: 48rem) {
+    .glaube {
+      grid-template-columns: 3fr 2fr;
+      gap: var(--abstand-lg);
+    }
+  }
+</style>
