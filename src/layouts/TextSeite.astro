@@ -1,0 +1,34 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  titel: string;
+  beschreibung?: string;
+}
+
+const { titel, beschreibung } = Astro.props;
+---
+
+<!-- Layout für reine Textseiten wie Impressum und Datenschutz -->
+<BaseLayout titel={titel} beschreibung={beschreibung}>
+  <article class="abschnitt">
+    <div class="container fliesstext textseite">
+      <h1 class="abschnitt-titel">{titel}</h1>
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .textseite :global(h2) {
+    margin-top: var(--abstand-md);
+  }
+
+  .textseite :global(ul) {
+    padding-left: 1.25rem;
+  }
+
+  .textseite :global(address) {
+    font-style: normal;
+  }
+</style>

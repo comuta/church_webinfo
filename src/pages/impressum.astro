@@ -1,0 +1,49 @@
+---
+/*
+ * Vorlage – ersetzt keine Rechtsberatung. Angaben vor Veröffentlichung prüfen.
+ */
+import TextSeite from '../layouts/TextSeite.astro';
+import { gemeinde } from '../config/gemeinde';
+
+const { adresse, kontakt, impressum } = gemeinde;
+---
+
+<TextSeite titel="Impressum" beschreibung={`Impressum der ${gemeinde.name}`}>
+  <h2>Angaben gemäß § 5 DDG</h2>
+  <address>
+    {impressum.traeger}<br />
+    {adresse.strasse}<br />
+    {adresse.plz} {adresse.ort}
+  </address>
+
+  <h2>Vertreten durch</h2>
+  <p>{impressum.vertretenDurch}</p>
+
+  <h2>Kontakt</h2>
+  <p>
+    Telefon: <a href={`tel:${kontakt.telefon.replace(/\s/g, '')}`}>{kontakt.telefon}</a><br />
+    E-Mail: <a href={`mailto:${kontakt.email}`}>{kontakt.email}</a>
+  </p>
+
+  {impressum.registernummer && (
+    <>
+      <h2>Registereintrag</h2>
+      <p>
+        Eingetragen im Vereinsregister.<br />
+        Registergericht: {impressum.registergericht}<br />
+        Registernummer: {impressum.registernummer}
+      </p>
+    </>
+  )}
+
+  <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
+  <p>{impressum.verantwortlichInhalt}</p>
+
+  <h2>Haftung für Links</h2>
+  <p>
+    Unsere Website enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss
+    haben. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber
+    verantwortlich. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Links umgehend
+    entfernen.
+  </p>
+</TextSeite>

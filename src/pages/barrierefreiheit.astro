@@ -1,0 +1,31 @@
+---
+import TextSeite from '../layouts/TextSeite.astro';
+import { gemeinde } from '../config/gemeinde';
+
+const { kontakt } = gemeinde;
+---
+
+<TextSeite titel="Erklärung zur Barrierefreiheit" beschreibung={`Erklärung zur Barrierefreiheit der Website der ${gemeinde.name}`}>
+  <p>
+    Wir möchten, dass alle Menschen unsere Website uneingeschränkt nutzen können. Sie wurde von Anfang
+    an mit Blick auf die Web Content Accessibility Guidelines (WCAG) 2.2, Stufe AA, entwickelt.
+  </p>
+
+  <h2>Umgesetzte Maßnahmen</h2>
+  <ul>
+    <li>Bedienung vollständig per Tastatur möglich, mit sichtbarer Fokus-Markierung</li>
+    <li>Link „Zum Inhalt springen“ am Anfang jeder Seite</li>
+    <li>Klare Überschriftenstruktur und semantische Seitenbereiche</li>
+    <li>Ausreichende Farbkontraste, heller und dunkler Modus</li>
+    <li>Alternativtexte für inhaltlich relevante Bilder</li>
+    <li>Änderungen des Live-Status werden für Screenreader angesagt</li>
+    <li>Reduzierte Animationen, wenn dies im Betriebssystem eingestellt ist</li>
+  </ul>
+
+  <h2>Barriere melden</h2>
+  <p>
+    Ist Ihnen eine Barriere aufgefallen? Dann schreiben Sie uns gerne an
+    <a href={`mailto:${kontakt.email}`}>{kontakt.email}</a> oder rufen Sie uns an unter
+    <a href={`tel:${kontakt.telefon.replace(/\s/g, '')}`}>{kontakt.telefon}</a>.
+  </p>
+</TextSeite>
