@@ -103,9 +103,48 @@ Gemeindespezifische Inhalte sollen zentral pflegbar sein, damit die Vorlage für
 - Bilder mit Alternativtexten
 - Angaben für Impressum und Datenschutzerklärung
 
+## Entwicklung
+
+Die Seite wird mit [Astro](https://astro.build) als statische Website gebaut. Voraussetzung ist Node.js ab Version 22.12.
+
+```bash
+npm install       # Abhängigkeiten installieren
+npm run dev       # Entwicklungsserver auf http://localhost:4321
+npm run build     # Typprüfung und Build nach dist/
+npm run preview   # gebaute Seite lokal ansehen
+```
+
+Den Inhalt des Ordners `dist/` auf einen beliebigen Webspace hochladen – eine Datenbank oder Node.js auf dem Server ist nicht nötig.
+
+### Projektstruktur
+
+```
+src/
+├── config/
+│   ├── gemeinde.ts     # alle Inhalte und Einstellungen der Gemeinde
+│   └── bilder.ts       # Bilder mit Alternativtexten
+├── assets/bilder/      # Bilddateien (werden beim Build optimiert)
+├── components/         # Abschnitte der Seite (Header, Hero, Livestream, …)
+├── layouts/            # Seitengerüst mit SEO-Metadaten
+├── pages/              # jede Datei = eine Seite (inkl. robots.txt)
+├── scripts/            # Browser-Logik für Live-Status und Termine
+└── styles/global.css   # Design-Tokens und Basis-Styles
+```
+
+### Für eine Gemeinde anpassen
+
+1. Inhalte in `src/config/gemeinde.ts` eintragen (inkl. `site`-URL, Stream und Gottesdienstzeiten)
+2. Eigene Fotos in `src/assets/bilder/` ablegen und in `src/config/bilder.ts` eintragen
+3. Farben bei Bedarf in `src/styles/global.css` unter „Design-Tokens“ ändern
+4. Impressum und Datenschutzerklärung prüfen – die Texte sind Vorlagen und ersetzen keine Rechtsberatung
+
+### Icecast-Live-Status
+
+Der Live-Status wird im Browser über `status-json.xsl` des Icecast-Servers abgefragt. Der Server muss dafür CORS erlauben (Icecast ab 2.4 sendet standardmäßig `Access-Control-Allow-Origin: *`). Ist der Server nicht erreichbar, zeigt die Seite anhand des Gottesdienstplans an, ob laut Plan gerade etwas läuft.
+
 ## Status
 
-Projekt in der Planungsphase. Technologie-Stack und Projektstruktur folgen.
+Grundstruktur steht. Es fehlen noch echte Inhalte, Fotos und ein Social-Media-Vorschaubild.
 
 ## Lizenz
 
