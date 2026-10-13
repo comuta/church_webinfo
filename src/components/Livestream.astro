@@ -1,0 +1,185 @@
+---
+import { gemeinde } from '../config/gemeinde';
+
+const wochentage = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+const { stream, gottesdienste } = gemeinde;
+---
+
+<section class="abschnitt livestream" id="livestream" aria-labelledby="livestream-titel">
+  <div class="container livestream__raster">
+    <div>
+      <h2 class="abschnitt-titel" id="livestream-titel">Livestream</h2>
+
+      <!-- Wird per JavaScript aktualisiert; aria-live sagt Änderungen für Screenreader an -->
+      <p class="livestream__status" data-status="unbekannt" aria-live="polite">
+        <span class="livestream__punkt" aria-hidden="true"></span>
+        <span class="livestream__status-text">Gottesdienste live und zum Mithören</span>
+      </p>
+      <p class="livestream__naechster" hidden></p>
+
+      <audio class="livestream__player" controls preload="none">
+        <source src={stream.url} type={stream.mimeType} />
+        Ihr Browser unterstützt keine Audio-Wiedergabe.
+        <a href={stream.url}>Stream direkt öffnen</a>.
+      </audio>
+      <p class="livestream__hinweis">
+        Der Stream lässt sich auch in jedem Mediaplayer öffnen:
+        <a href={stream.url}>Stream-Adresse</a>
+      </p>
+    </div>
+
+    <div class="livestream__zeiten">
+      <h3>Regelmäßige Gottesdienste</h3>
+      <ul>
+        {gottesdienste.regelmaessig.map((g) => (
+          <li>
+            <span>{g.titel}</span>
+            <span>{wochentage[g.wochentag]}, {g.uhrzeit} Uhr</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gemeinde } from '../config/gemeinde';
+  import { istLive } from '../scripts/icecast';
+  import { kommendeTermine, laeuftGerade, terminFormatieren } from '../scripts/termine';
+
+  const AKTUALISIERUNG_MS = 60_000;
+  const { stream, gottesdienste } = gemeinde;
+
+  const status = document.querySelector<HTMLElement>('.livestream__status')!;
+  const statusText = status.querySelector<HTMLElement>('.livestream__status-text')!;
+  const naechster = document.querySelector<HTMLElement>('.livestream__naechster')!;
+
+  async function aktualisieren() {
+    const jetzt = new Date();
+    const termine = kommendeTermine(gottesdienste.regelmaessig, gottesdienste.sondertermine, jetzt);
+    const aktuell = termine.find((t) => laeuftGerade(t, jetzt));
+    const kommend = termine.find((t) => t.beginn > jetzt);
+
+    const live = await istLive(stream.statusUrl, stream.mount);
+
+    // Ist der Server nicht erreichbar, dient der Gottesdienstplan als Anhaltspunkt
+    if (live === true) {
+      status.dataset.status = 'live';
+      statusText.textContent = aktuell ? `Jetzt live: ${aktuell.titel}` : 'Jetzt live';
+    } else if (live === null && aktuell) {
+      status.dataset.status = 'geplant';
+      statusText.textContent = `Laut Plan läuft gerade: ${aktuell.titel}`;
+    } else {
+      status.dataset.status = 'offline';
+      statusText.textContent = 'Gerade keine Übertragung';
+    }
+
+    if (kommend) {
+      naechster.textContent = `Nächster Termin: ${kommend.titel} am ${terminFormatieren(kommend)}`;
+      naechster.hidden = false;
+    } else {
+      naechster.hidden = true;
+    }
+  }
+
+  aktualisieren();
+  setInterval(() => {
+    if (document.visibilityState === 'visible') aktualisieren();
+  }, AKTUALISIERUNG_MS);
+</script>
+
+<style>
+  .livestream__raster {
+    display: grid;
+    gap: var(--abstand-md);
+  }
+
+  @media (min-width: 48rem) {
+    .livestream__raster {
+      grid-template-columns: 3fr 2fr;
+      align-items: start;
+    }
+  }
+
+  .livestream__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.875rem;
+    border: 1px solid var(--farbe-rand);
+    border-radius: 999px;
+    font-weight: 600;
+  }
+
+  .livestream__punkt {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background: var(--farbe-text-leise);
+  }
+
+  .livestream__status[data-status='live'] {
+    border-color: var(--farbe-live);
+    color: var(--farbe-live);
+  }
+
+  .livestream__status[data-status='live'] .livestream__punkt {
+    background: var(--farbe-live);
+    animation: pulsieren 1.6s ease-in-out infinite;
+  }
+
+  .livestream__status[data-status='geplant'] .livestream__punkt {
+    background: var(--farbe-akzent);
+  }
+
+  @keyframes pulsieren {
+    50% {
+      opacity: 0.35;
+    }
+  }
+
+  .livestream__naechster {
+    margin-top: var(--abstand-sm);
+    font-size: var(--text-lg);
+  }
+
+  .livestream__player {
+    width: 100%;
+    margin-top: var(--abstand-md);
+  }
+
+  .livestream__hinweis {
+    margin-top: var(--abstand-xs);
+    color: var(--farbe-text-leise);
+    font-size: var(--text-sm);
+  }
+
+  .livestream__zeiten {
+    padding: var(--abstand-md);
+    border-radius: var(--radius);
+    background: var(--farbe-flaeche);
+  }
+
+  .livestream__zeiten ul {
+    margin-top: var(--abstand-sm);
+    padding: 0;
+    list-style: none;
+  }
+
+  .livestream__zeiten li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    padding-block: 0.625rem;
+    border-bottom: 1px solid var(--farbe-rand);
+  }
+
+  .livestream__zeiten li:last-child {
+    border-bottom: 0;
+  }
+
+  .livestream__zeiten li span:first-child {
+    font-weight: 600;
+  }
+</style>
