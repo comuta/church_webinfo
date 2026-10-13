@@ -1,0 +1,83 @@
+---
+import '@fontsource-variable/lora';
+import '@fontsource-variable/inter';
+import '../styles/global.css';
+
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { gemeinde } from '../config/gemeinde';
+
+interface Props {
+  /** Seitentitel; ohne Angabe wird nur der Gemeindename verwendet */
+  titel?: string;
+  beschreibung?: string;
+  /** Seite nicht in Suchmaschinen aufnehmen */
+  noindex?: boolean;
+}
+
+const { titel, beschreibung = gemeinde.beschreibung, noindex = false } = Astro.props;
+
+const seitenTitel = titel ? `${titel} | ${gemeinde.name}` : gemeinde.name;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+
+const wochentage = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+// Strukturierte Daten für Suchmaschinen (schema.org)
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Church',
+  name: gemeinde.name,
+  description: gemeinde.beschreibung,
+  url: gemeinde.site,
+  telephone: gemeinde.kontakt.telefon,
+  email: gemeinde.kontakt.email,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: gemeinde.adresse.strasse,
+    postalCode: gemeinde.adresse.plz,
+    addressLocality: gemeinde.adresse.ort,
+    addressCountry: gemeinde.adresse.land,
+  },
+  openingHoursSpecification: gemeinde.gottesdienste.regelmaessig.map((g) => ({
+    '@type': 'OpeningHoursSpecification',
+    name: g.titel,
+    dayOfWeek: `https://schema.org/${wochentage[g.wochentag]}`,
+    opens: g.uhrzeit,
+  })),
+};
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{seitenTitel}</title>
+    <meta name="description" content={beschreibung} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    <meta name="theme-color" content="#faf7f1" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#171613" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Open Graph für Vorschauen in Messengern und sozialen Netzwerken -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:site_name" content={gemeinde.name} />
+    <meta property="og:title" content={seitenTitel} />
+    <meta property="og:description" content={beschreibung} />
+    <meta property="og:url" content={canonical} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+    <Header />
+    <main id="inhalt" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
