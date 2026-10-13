@@ -1,0 +1,88 @@
+---
+import { gemeinde } from '../config/gemeinde';
+
+const rechtliches = [
+  { href: '/impressum', text: 'Impressum' },
+  { href: '/datenschutz', text: 'Datenschutz' },
+  { href: '/barrierefreiheit', text: 'Barrierefreiheit' },
+];
+
+const telefonLink = `tel:${gemeinde.kontakt.telefon.replace(/\s/g, '')}`;
+const jahr = new Date().getFullYear();
+---
+
+<footer class="footer" id="kontakt">
+  <div class="container footer__inner">
+    <div>
+      <h2 class="footer__titel">{gemeinde.name}</h2>
+      <address>
+        {gemeinde.adresse.strasse}<br />
+        {gemeinde.adresse.plz} {gemeinde.adresse.ort}
+      </address>
+    </div>
+
+    <div>
+      <h2 class="footer__titel">Kontakt</h2>
+      <ul class="footer__liste">
+        <li><a href={telefonLink}>{gemeinde.kontakt.telefon}</a></li>
+        <li><a href={`mailto:${gemeinde.kontakt.email}`}>{gemeinde.kontakt.email}</a></li>
+      </ul>
+    </div>
+
+    <nav aria-label="Rechtliches">
+      <h2 class="footer__titel">Rechtliches</h2>
+      <ul class="footer__liste">
+        {rechtliches.map((link) => (
+          <li>
+            <a href={link.href}>{link.text}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+
+  <p class="container footer__copyright">© {jahr} {gemeinde.impressum.traeger}</p>
+</footer>
+
+<style>
+  .footer {
+    padding-block: var(--abstand-lg) var(--abstand-md);
+    background: var(--farbe-primaer);
+    color: var(--farbe-primaer-text);
+  }
+
+  .footer a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: inherit;
+  }
+
+  .footer address {
+    font-style: normal;
+  }
+
+  .footer__inner {
+    display: grid;
+    gap: var(--abstand-md);
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+
+  .footer__titel {
+    margin-bottom: var(--abstand-xs);
+    font-size: var(--text-lg);
+  }
+
+  .footer__liste {
+    padding: 0;
+    list-style: none;
+  }
+
+  .footer__copyright {
+    margin-top: var(--abstand-md);
+    padding-top: var(--abstand-sm);
+    border-top: 1px solid currentColor;
+    font-size: var(--text-sm);
+    opacity: 0.85;
+  }
+</style>

@@ -1,0 +1,184 @@
+---
+import { gemeinde } from '../config/gemeinde';
+
+const links = [
+  { href: '/#livestream', text: 'Livestream' },
+  { href: '/#glaube', text: 'Über uns' },
+  { href: '/#anfahrt', text: 'Anfahrt' },
+  { href: '/#kontakt', text: 'Kontakt' },
+];
+---
+
+<header class="header" id="header">
+  <div class="container header__inner">
+    <a class="header__marke" href="/">
+      <svg class="header__logo" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 2v20M6 8h12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      </svg>
+      <span>{gemeinde.kurzname}</span>
+    </a>
+
+    <button
+      class="header__menu-button"
+      type="button"
+      aria-expanded="false"
+      aria-controls="hauptnavigation"
+      hidden
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+      <span>Menü</span>
+    </button>
+
+    <nav class="header__nav" id="hauptnavigation" aria-label="Hauptnavigation">
+      <ul>
+        {links.map((link) => (
+          <li>
+            <a href={link.href}>{link.text}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!--
+  Ohne JavaScript bleibt die Navigation immer sichtbar. Mit JavaScript wird
+  sie auf kleinen Bildschirmen hinter dem Menü-Button eingeklappt. Das Skript
+  läuft inline, damit die Navigation beim Laden nicht kurz aufblitzt.
+-->
+<script is:inline>
+  (() => {
+    const header = document.getElementById('header');
+    const button = header.querySelector('.header__menu-button');
+    const nav = header.querySelector('.header__nav');
+
+    header.dataset.menu = 'zu';
+    button.hidden = false;
+
+    const setzen = (offen) => {
+      header.dataset.menu = offen ? 'offen' : 'zu';
+      button.setAttribute('aria-expanded', String(offen));
+    };
+
+    button.addEventListener('click', () => setzen(header.dataset.menu !== 'offen'));
+    nav.addEventListener('click', (e) => {
+      if (e.target.closest('a')) setzen(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && header.dataset.menu === 'offen') {
+        setzen(false);
+        button.focus();
+      }
+    });
+  })();
+</script>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--farbe-hintergrund);
+    border-bottom: 1px solid var(--farbe-rand);
+  }
+
+  .header__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--abstand-xs);
+    min-height: 4rem;
+  }
+
+  .header__marke {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    color: var(--farbe-text);
+    font-family: var(--schrift-ueberschrift);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .header__logo {
+    width: 1.75rem;
+    height: 1.75rem;
+    color: var(--farbe-akzent);
+  }
+
+  .header__menu-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--farbe-rand);
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--farbe-text);
+    cursor: pointer;
+  }
+
+  .header__menu-button[hidden] {
+    display: none;
+  }
+
+  .header__menu-button svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .header__nav {
+    flex-basis: 100%;
+  }
+
+  .header[data-menu='zu'] .header__nav {
+    display: none;
+  }
+
+  .header__nav ul {
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 var(--abstand-xs);
+    list-style: none;
+  }
+
+  .header__nav a {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding-inline: 0.25rem;
+    color: var(--farbe-text);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .header__nav a:hover {
+    color: var(--farbe-primaer);
+    text-decoration: underline;
+  }
+
+  /* Ab lg: Navigation immer sichtbar in einer Zeile */
+  @media (min-width: 64rem) {
+    .header__menu-button {
+      display: none;
+    }
+
+    .header__nav,
+    .header[data-menu='zu'] .header__nav {
+      display: block;
+      flex-basis: auto;
+    }
+
+    .header__nav ul {
+      flex-direction: row;
+      gap: var(--abstand-md);
+      padding: 0;
+    }
+  }
+</style>
