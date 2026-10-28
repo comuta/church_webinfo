@@ -45,34 +45,34 @@ const links = [
 
 <!--
   Ohne JavaScript bleibt die Navigation immer sichtbar. Mit JavaScript wird
-  sie auf kleinen Bildschirmen hinter dem Menü-Button eingeklappt. Das Skript
-  läuft inline, damit die Navigation beim Laden nicht kurz aufblitzt.
+  sie auf kleinen Bildschirmen hinter dem Menü-Button eingeklappt. Damit die
+  Navigation beim Laden nicht kurz aufblitzt, klappt `@media (scripting: enabled)`
+  sie schon per CSS ein. Das Skript wird von Astro gebündelt und ist dadurch
+  über die Content-Security-Policy erlaubt (kein `is:inline`).
 -->
-<script is:inline>
-  (() => {
-    const header = document.getElementById('header');
-    const button = header.querySelector('.header__menu-button');
-    const nav = header.querySelector('.header__nav');
+<script>
+  const header = document.getElementById('header')!;
+  const button = header.querySelector<HTMLButtonElement>('.header__menu-button')!;
+  const nav = header.querySelector<HTMLElement>('.header__nav')!;
 
-    header.dataset.menu = 'zu';
-    button.hidden = false;
+  header.dataset.menu = 'zu';
+  button.hidden = false;
 
-    const setzen = (offen) => {
-      header.dataset.menu = offen ? 'offen' : 'zu';
-      button.setAttribute('aria-expanded', String(offen));
-    };
+  const setzen = (offen: boolean) => {
+    header.dataset.menu = offen ? 'offen' : 'zu';
+    button.setAttribute('aria-expanded', String(offen));
+  };
 
-    button.addEventListener('click', () => setzen(header.dataset.menu !== 'offen'));
-    nav.addEventListener('click', (e) => {
-      if (e.target.closest('a')) setzen(false);
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && header.dataset.menu === 'offen') {
-        setzen(false);
-        button.focus();
-      }
-    });
-  })();
+  button.addEventListener('click', () => setzen(header.dataset.menu !== 'offen'));
+  nav.addEventListener('click', (e) => {
+    if ((e.target as Element).closest('a')) setzen(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && header.dataset.menu === 'offen') {
+      setzen(false);
+      button.focus();
+    }
+  });
 </script>
 
 <style>
@@ -141,6 +141,17 @@ const links = [
     display: none;
   }
 
+  /* Mit JavaScript schon vor dem Skript eingeklappt, damit nichts aufblitzt */
+  @media (scripting: enabled) {
+    .header__menu-button[hidden] {
+      display: inline-flex;
+    }
+
+    .header:not([data-menu='offen']) .header__nav {
+      display: none;
+    }
+  }
+
   .header__nav ul {
     display: flex;
     flex-direction: column;
@@ -165,12 +176,14 @@ const links = [
 
   /* Ab lg: Navigation immer sichtbar in einer Zeile */
   @media (min-width: 64rem) {
-    .header__menu-button {
+    .header__menu-button,
+    .header__menu-button[hidden] {
       display: none;
     }
 
     .header__nav,
-    .header[data-menu='zu'] .header__nav {
+    .header[data-menu='zu'] .header__nav,
+    .header:not([data-menu='offen']) .header__nav {
       display: block;
       flex-basis: auto;
     }
