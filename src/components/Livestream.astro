@@ -5,7 +5,15 @@ const wochentage = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', '
 const { stream, gottesdienste } = gemeinde;
 ---
 
-<section class="abschnitt livestream" id="livestream" aria-labelledby="livestream-titel">
+<!-- Nur die vom Skript benötigten Daten werden übergeben, nicht die ganze Konfiguration -->
+<section
+  class="abschnitt livestream"
+  id="livestream"
+  aria-labelledby="livestream-titel"
+  data-status-url={stream.statusUrl}
+  data-mount={stream.mount}
+  data-gottesdienste={JSON.stringify(gottesdienste)}
+>
   <div class="container livestream__raster">
     <div>
       <h2 class="abschnitt-titel" id="livestream-titel">Livestream</h2>
@@ -43,12 +51,17 @@ const { stream, gottesdienste } = gemeinde;
 </section>
 
 <script>
-  import { gemeinde } from '../config/gemeinde';
+  import type { Gottesdienst, Sondertermin } from '../config/gemeinde';
   import { istLive } from '../scripts/icecast';
   import { kommendeTermine, laeuftGerade, terminFormatieren } from '../scripts/termine';
 
   const AKTUALISIERUNG_MS = 60_000;
-  const { stream, gottesdienste } = gemeinde;
+
+  const abschnitt = document.querySelector<HTMLElement>('.livestream')!;
+  const { statusUrl, mount } = abschnitt.dataset as { statusUrl: string; mount: string };
+  const gottesdienste: { regelmaessig: Gottesdienst[]; sondertermine: Sondertermin[] } = JSON.parse(
+    abschnitt.dataset.gottesdienste!,
+  );
 
   const status = document.querySelector<HTMLElement>('.livestream__status')!;
   const statusText = status.querySelector<HTMLElement>('.livestream__status-text')!;
@@ -60,7 +73,7 @@ const { stream, gottesdienste } = gemeinde;
     const aktuell = termine.find((t) => laeuftGerade(t, jetzt));
     const kommend = termine.find((t) => t.beginn > jetzt);
 
-    const live = await istLive(stream.statusUrl, stream.mount);
+    const live = await istLive(statusUrl, mount);
 
     // Ist der Server nicht erreichbar, dient der Gottesdienstplan als Anhaltspunkt
     if (live === true) {
